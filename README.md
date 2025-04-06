@@ -20,6 +20,7 @@ Para controlar quien accede a los endpoint de Actuator, podríamos proteger los 
 ## Ejecución del proyecto
 
 - Clonar/descargar el proyecto
+- Sustituir el nombre `application_template.yml` por `application.yml` e indicar los valores correctos en usuario y password de BBDD
 - Ejecutar el proyecto con el comando: `./mvnw spring-boot:run`
     - O ejecutar directamente desde IntelliJ Idea
 - Endpoints de Actuator:
@@ -50,3 +51,95 @@ Creamos:
 - `controllers/FootballController` devuelve el contenido cargado en memoria por la clase FileLoader.
 
 Modificamos `application.yml` para indicar la carpeta que contiene el fichero a cargar y añadimos el nuevo endpoint de Actuator.
+
+### Testing
+
+Ver arriba Ejecución del proyecto.
+
+## Usando sondas y crear un control health personalizado
+
+Vamos a configurar la aplicación para gestionar sondas (probes) y crear un control health personalizado para verificar que la aplicación puede conectarse a una BBDD.
+
+Modificamos:
+
+- `pom.xml` para añadir las dependencias para poder usar la BBDD `PostgreSQL`
+- `application.yml` para habilitar los probes readiness y liveness y configurar la BBDD
+- `loader/FileLoader` modificado para simular que la carga del fichero nos lleva 10 segundos
+
+Creamos:
+
+- `services/TradingService` emula el servicio de football trading
+- `actuator/FootballHealthIndicator` donde hacemos override el método `health()` para controlar la conectividad de la BBDD
+
+### Testing
+
+#### Test 1
+Ejecutar la app, abrir el navegador y ejecutar el siguiente endpoint
+
+- http://localhost:8080/actuator/health/readiness
+
+Durante los primeros 10sg, que es lo que tarda en cargarse el fichero, veremos:
+
+```json
+{
+ "status": "OUT_OF_SERVICE"
+}
+```
+
+Pasados 10sg, el fichero estará cargado y veremos:
+
+```json
+{
+ "status": "UP"
+}
+```
+
+#### Test 2
+
+Ejecutar la app 
+
+- http://localhost:8080/actuator/health/liveness
+
+Siempre veremos el resultado:
+
+```json
+{
+ "status": "UP"
+}
+```
+
+#### Test 3
+
+- Usar el endpoint de trading en Postman
+  - Hay que iniciar la app cada vez antes de hacer el POST
+  - En la carpeta Postman se encuentra el fichero con el endpoint a probar, `trading`
+  - Recordar que si hay más de 90 peticiones pendientes, se marcará como fallo, es decir, el endpoint liveness devolverá `DOWN` de vez en cuando
+    - http://localhost:8080/actuator/health/liveness
+
+#### Test 4
+
+- Testear el endpoint de chequeo de health en Postman
+  - En Docker poner en pausa `Postgres`
+  - Ejecutar en Postman el endpoint `test health endpoint`
+  - Tras un rato aparecerá el resultado siguiente:
+   
+```json  
+{
+  "status": "DOWN",
+  "groups": [
+    "liveness",
+    "readiness"
+  ]
+}
+```
+  - Si en Docker pulsamos resume y ejecutamos el endpoint de nuevo veremos
+
+```json  
+{
+  "status": "UP",
+  "groups": [
+    "liveness",
+    "readiness"
+  ]
+}
+```

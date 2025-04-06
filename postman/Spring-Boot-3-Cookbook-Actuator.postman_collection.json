@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "43f611f7-0e00-4986-b54e-9cabc1dae726",
+		"name": "Spring-Boot-3-Cookbook-Actuator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7508044"
+	},
+	"item": [
+		{
+			"name": "Trading",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\"1\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/football",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"football"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test health endpoint",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/actuator/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

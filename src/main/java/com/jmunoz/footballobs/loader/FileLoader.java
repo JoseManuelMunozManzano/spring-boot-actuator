@@ -29,6 +29,13 @@ public class FileLoader {
 
     // Cargar el fichero y mantener el contenido en memoria
     private void loadFile(String fileName) throws Exception {
+        // Simulamos que la carga del fichero lleva 10 sg
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         this.fileName = fileName;
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(fileName);
