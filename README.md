@@ -29,3 +29,24 @@ Para controlar quien accede a los endpoint de Actuator, podríamos proteger los 
     - - http://localhost:8080/actuator/metrics/process.cpu.usage  (esta métrica, por ejemplo)
   - http://localhost:8080/actuator/beans
   - http://localhost:8080/actuator/loggers
+  - http://localhost:8080/actuator/football y veremos la versión actual `teams/1.0.1.json`
+  - Cambiar el nombre del fichero a `teams/1.0.2.json`, añadiendo al array un nuevo equipo de fútbol y refrescar
+    - `curl --request POST http://localhost:8080/actuator/football`
+    - Ejecutar de nuevo `http://localhost:8080/actuator/football` y veremos la nueva versión `teams/1.0.2.json`
+- Endpoints
+  - http://localhost:8080/football para mostrar los valores cargados en memoria, provenientes del fichero de `teams/1.0.1.json`
+
+## Añadir endpoint de Actuator personalizado a mi aplicación
+
+Voy a cargar un fichero de una carpeta y devolver ciertos valores. Una vez hecho esto, necesitaré crear un endpoint de Actuator personalizado que devuelva el fichero cargado. También voy a configurar el endpoint para recargar el fichero.
+
+Creamos:
+
+- `loader/FileLoader` para cargar un fichero y mantener el contenido el memoria
+- `actuator/FootballCustomEndpoint` define el endpoint de Actuator `football`
+- `config/FootballConfiguration` es una clase de configuración donde creamos beans para FileLoader y FootballCustomEndpoint
+- `loader/DataInitializer` implementa una interface ApplicationRunner para cargar el fichero de `/teams/1.0.1.json`
+- `teams/1.0.1.json` fichero con un array de valores
+- `controllers/FootballController` devuelve el contenido cargado en memoria por la clase FileLoader.
+
+Modificamos `application.yml` para indicar la carpeta que contiene el fichero a cargar y añadimos el nuevo endpoint de Actuator.
