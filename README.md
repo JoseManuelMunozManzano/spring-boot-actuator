@@ -14,6 +14,7 @@ En `applications.yml` he añadido los siguientes endpoints: `health,env,metrics,
   - /actuator/metrics/process.cpu.usage
 - /actuator/beans: devuelve una lista con los beans registrados en el contenedor IoC, es decir, los beans que pueden inyectarse en otros beans
 - /actuator/loggers: devuelve una lista de niveles de log y loggers de la aplicación. Permite modificar el nivel de log en tiempo de ejecución
+- /actuator/info: devuelve información de la app, como la versión, nombre de la app...
 
 Para controlar quien accede a los endpoint de Actuator, podríamos proteger los endpoints.
 
@@ -30,6 +31,7 @@ Para controlar quien accede a los endpoint de Actuator, podríamos proteger los 
     - - http://localhost:8080/actuator/metrics/process.cpu.usage  (esta métrica, por ejemplo)
   - http://localhost:8080/actuator/beans
   - http://localhost:8080/actuator/loggers
+  - http://localhost:8080/actuator/info
   - http://localhost:8080/actuator/football y veremos la versión actual `teams/1.0.1.json`
   - Cambiar el nombre del fichero a `teams/1.0.2.json`, añadiendo al array un nuevo equipo de fútbol y refrescar
     - `curl --request POST http://localhost:8080/actuator/football`
